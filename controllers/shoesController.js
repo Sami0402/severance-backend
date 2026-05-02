@@ -14,7 +14,10 @@ const registerUser = async (req, res) => {
     const userExist = await User.findOne({ email });
     
     if(userExist){
-        return res.json({ message: "User already exist" });
+        return res.json({
+            success: false,
+            message: "User already exist" 
+        });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -29,7 +32,18 @@ const registerUser = async (req, res) => {
 
     await user.save();
 
-    res.json({message: "User registered"});
+    res.json({
+        success: true,
+        message: "User registered",
+        user: {
+            "id": user._id,
+            "firstName": firstName,
+            "lastName": lastName,
+            "username": username,
+            "email": email,
+
+        },
+    });
 };
 
 
@@ -41,17 +55,17 @@ const loginUser = async (req, res) => {
     const user = await User.findOne({email});
     
     if(!user) {
-        return res.status(400).json({
+        return res.status(404).json({
             success: false,
-            message: "User not found"});
+            message: "User not found!"});
     }
     
     const isMatch = await bcrypt.compare(password, user.password);
     
 
     if(!isMatch) {
-        return res.status(400).json({
-            success: fals,
+        return res.status(401).json({
+            success: false,
             message: "Wrong Password"});
     }
 
@@ -75,15 +89,23 @@ const loginUser = async (req, res) => {
 
 const createShoe = async (req, res) => {
 
-    const {name, brand, price} = req.body;
+    const {id, name, category, brand, price, title, description, rating} = req.body;
+
+    const sizes = JSON.parse(req.body.sizes);
 
     const image = req.file ? req.file.filename : null;
 
     const newShoe = new Shoe({
+        id,
         name,
+        category,     
         brand,
         price,
-        image
+        title,
+        description,
+        sizes,
+        image,
+        rating 
     });
 
     const saveShoe = await newShoe.save();
@@ -98,7 +120,19 @@ const createShoe = async (req, res) => {
 const getAllShoes = async (req, res) => {
     const shoes = await Shoe.find();
     
-    res.json(shoes);
+    if(!shoes) {
+        return res.status(500).json({
+            success: false,
+            message: "There is no Shoe Available at this moment!"
+        });
+    }
+
+    res.json(
+        {
+            success: true,
+            data: shoes
+        }
+        );
 };
 
 
@@ -113,10 +147,17 @@ const getShoeById = async (req, res) => {
             return res.status(404).json({ message: "Shoe not found" });
         }
 
-        res.json(shoe);
+        res.json(
+             {
+            success: true,
+            data: shoe
+        }
+        );
 
     } catch(error) {
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({ 
+            success: false,
+            message: "Server error" });
     }
 
 }
@@ -128,16 +169,21 @@ const updateShoe = async (req, res) => {
 
         console.log(req.body);
         const updatedShoe = await Shoe.findByIdAndUpdate(req.params.id, req.body, { returnDocument: "after" });
-
+        
 
         if(!updatedShoe){
             return res.status(404).json({ message: "Shoe not found" });
         }
 
-        res.json(updatedShoe);
+        res.json({
+            success: true,
+            data: updatedShoe
+        });
 
     } catch(e) {
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({ 
+            success: false,
+            message: "Server error" });
     }    
     
 }
@@ -153,10 +199,15 @@ const deleteShoe = async (req, res) => {
             return res.status(404).json({ message: "Shoe not found" });
         }
 
-        res.json({ message: "Shoe deleted successfully" });
+        res.json({ 
+            success: true,
+            message: "Shoe deleted successfully" }
+        );
 
     } catch(e) {
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({ 
+            success: false,
+            message: "Server error" });
     }
      
 }

@@ -21,3 +21,6 @@ Node.js + Express + MongoDB backend for shoe store app.
 - Express.js
 - MongoDB
 - Mongoose
+
+
+- TODO WOMEN's Asics, Puma shoes and KIDS shoes entry remaining,

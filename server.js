@@ -21,12 +21,14 @@ app.use(express.json());
 // This enables x-www-form-urlencoded parsing
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/", shoesRoutes);
-
 app.use("/uploads", express.static("uploads"));
 
+app.use("/", shoesRoutes);
+
+
+// Must be at last to catch error, act as a middleware
 app.use(errorHandler);
 
-app.listen(PORT, ()=> {
-    console.log("Server running on port ${PORT}");
+app.listen(PORT, "0.0.0.0", ()=> {
+    console.log(`Server running on port ${PORT}`);
 });
