@@ -11,8 +11,7 @@ const shoeSchema = new mongoose.Schema({
     description: String,
     sizes: [
         {
-            size : { type: String, required: true },
-            isSelected : { type: Boolean, required: true }
+            size : { type: String, required: true },         
         }
     ],
     rating: Number

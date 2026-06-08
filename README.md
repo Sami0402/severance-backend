@@ -23,4 +23,4 @@ Node.js + Express + MongoDB backend for shoe store app.
 - Mongoose
 
 
-- TODO WOMEN's Asics, Puma shoes and KIDS shoes entry remaining,
+- TODO Implement delete from cart 
