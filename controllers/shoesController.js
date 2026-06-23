@@ -281,7 +281,6 @@ const addToCart = async(req, res) => {
 
         const id = req.params.id;
 
-        console.log(req.body);
 
         const { selectedSize } = req.body;
 
@@ -297,7 +296,7 @@ const addToCart = async(req, res) => {
         
         const cartShoeIndex = user.cart.findIndex( (cart)=> cart.id == id && cart.selectedSize == selectedSize );
         
-
+        console.log(shoe.category);
         if (cartShoe){
             user.cart[cartShoeIndex].quantity += 1
         } else {
@@ -305,6 +304,7 @@ const addToCart = async(req, res) => {
                 id: shoe.id,
                 name: shoe.name,
                 image: shoe.image,
+                category: shoe.category,
                 price: shoe.price,
                 quantity: 1,
                 selectedSize: selectedSize
